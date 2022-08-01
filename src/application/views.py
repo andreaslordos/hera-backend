@@ -6,10 +6,18 @@ import json
 
 @csrf_exempt # be able to receive request even if there is no CSRF token
 def index(request):
-    if (request.method == 'GET'):
-        user = Backup.objects.create()
-        user.save()
-        return HttpResponse(json.dumps({ #send message back
-                'accessToken': user.accessToken.int,
-                'data': "roLzT3GBhVQw22WrUPAdsw==",   
+    if (request.method == 'POST'):
+        if (request.POST['type'] == "set"):
+            user = Backup.objects.create()
+            user.data = request.POST['message']
+            user.save()
+            return HttpResponse(json.dumps({ #send message back
+                    'accessToken': str(user.accessToken.int),
+                    'success': 1,
+                }), 'application/json')
+        elif (request.POST['type'] == "get"):
+            user = Backup.objects.get(pk = request.POST['accessToken'])
+            return HttpResponse(json.dumps({
+                    'data': user.data,
+                    'success': 1,
             }), 'application/json')
