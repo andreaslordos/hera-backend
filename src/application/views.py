@@ -19,7 +19,7 @@ def index(request):
             user.data = request.POST['message']
             user.save()
             return HttpResponse(json.dumps({ #send message back
-                    'accessToken': str(user.accessToken),
+                    'data': str(user.accessToken),
                     'success': 1,
                 }), 'application/json')
         elif (request.POST['type'] == "get"):
