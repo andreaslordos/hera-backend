@@ -4,6 +4,7 @@ from django.views.decorators.csrf import csrf_exempt
 from application.models import Backup
 import json
 import uuid
+import base64
 
 def is_valid_uuid(val):
     try:
@@ -16,6 +17,8 @@ def index(request):
     if (request.method == 'POST'):
         if (request.POST['type'] == "set"):
             user = Backup.objects.create()
+            print("(request.POST['message'])")
+            print(request.POST['message'])
             user.data = request.POST['message']
             user.save()
             return HttpResponse(json.dumps({ #send message back
@@ -31,7 +34,10 @@ def index(request):
             print("checkeduuid: " + str(checkedUUID))
             user = Backup.objects.get(pk = checkedUUID)
             if (user != None):
-                returnUserData = user.data
+                print("returning user data: " + (user.data).replace(" ", "+"))
+                #print(base64.b64decode(user.data, '-_'))
+
+                returnUserData = (user.data).replace(" ", "+")
                 success = 1
             return HttpResponse(json.dumps({
                     'data': returnUserData,
